@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script>
+    $( document ).ready(function() {
+      $.ajax({
+        url: 'main.php',                  //the script to call to get data
+        data: "",                        //you can insert url argumnets here to pass to api.php
+                                         //for example "id=5&parent=6"
+        dataType: 'json',                //data format
+        success: function(data)          //on recieve of reply
+        {
+          console.log(data);
+          var id = data[0][0];              //get id
+          var vname = data[0][1];           //get name
+          //--------------------------------------------------------------------
+          // 3) Update html content
+          //--------------------------------------------------------------------
+          $('#txtHint').html("<b>id: </b>"+id+"<b> name: </b>"+vname); //Set output element html
+          //recommend reading up on jquery selectors they are awesome
+          // http://api.jquery.com/category/selectors/
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+        console.log(xhr.status);
+        console.log(thrownError);
+      }
+      });
+    });
+  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+  <nav>
+    <!-- <i class="fa fa-bars fa-3x"></i> -->
+    <h1>SALA SQUAD SEARCH</h1>
+  </nav>
+  <div class="main">
+    <img src="football-icon.png" width="400px" height="400px">
+    <p id="txtHint">cane</p>
+    <div class="search">
+      <select class="select" name="Lega">
+
+      </select>
+      <select class="select" name="Squadra">
+
+      </select>
+    </div>
+  </div>
+</body>
+</html>
