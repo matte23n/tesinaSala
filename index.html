@@ -5,28 +5,92 @@
   <script>
     $( document ).ready(function() {
       $.ajax({
-        url: 'main.php',                  //the script to call to get data
-        data: "",                        //you can insert url argumnets here to pass to api.php
-                                         //for example "id=5&parent=6"
-        dataType: 'json',                //data format
-        success: function(data)          //on recieve of reply
+        type: "POST",
+        url: 'main.php',
+        data: {'dataString': 'getLeghe'},
+        dataType: 'json',
+        success: function(data)
         {
           console.log(data);
-          var id = data[0][0];              //get id
-          var vname = data[0][1];           //get name
-          //--------------------------------------------------------------------
-          // 3) Update html content
-          //--------------------------------------------------------------------
-          $('#txtHint').html("<b>id: </b>"+id+"<b> name: </b>"+vname); //Set output element html
-          //recommend reading up on jquery selectors they are awesome
-          // http://api.jquery.com/category/selectors/
+          for (var i = 0; i < data.length; i++) {
+              $('#selectLega').append('<option value="' + data[i].ID + '">' + data[i].Denominazione + '</option>');
+          }
         },
         error: function (xhr, ajaxOptions, thrownError) {
-        console.log(xhr.status);
-        console.log(thrownError);
-      }
+          console.log(xhr.status);
+          console.log(thrownError);
+        }
       });
+      updateSquadre(1);
+
     });
+    function updateSquadre(idSquadra) {
+      $('#selectSquadra').empty();
+      $.ajax({
+        type: "POST",
+        url: 'main.php',
+        data: {'dataString': 'getSquadre', 'idLega':idSquadra},
+        dataType: 'json',
+        success: function(data)
+        {
+          console.log(data);
+          for (var i = 0; i < data.length; i++) {
+              $('#selectSquadra').append('<option value="' + data[i].ID + '">' + data[i].Denominazione + '</option>');
+          }
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+          console.log(xhr.status);
+          console.log(thrownError);
+        }
+      });
+    }
+    function getGiocatori() {
+      //window.location='resultGiocatori.html';
+      var contentToRemove = document.querySelectorAll("#Giocatore");
+      $(contentToRemove).remove();
+      var squadra = $('#selectSquadra option:selected').val();
+      $.ajax({
+        type: "POST",
+        url: 'main.php',
+        data: {'dataString': 'getGiocatori', 'idSquadra':squadra},
+        dataType: 'json',
+        success: function(data)
+        {
+          console.log(data);
+          for (var i = 0; i < data.length; i++) {
+              //$('#selectSquadra').append('<option value="' + data[i].ID + '">' + data[i].Denominazione + '</option>');
+              //$('body').append('<div id="Giocatore">'+data[i].Nome+'</div>');
+              addGiocatore(data[i].Nome, data[i].Cognome, data[i].DataDiNascita, data[i].Ruolo)
+          }
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+          console.log(xhr.status);
+          console.log(thrownError);
+        }
+      });
+      $('#mainimg').css("display", "none");
+
+    }
+
+    function addGiocatore(nome, cognome, dataDiNascita, ruolo){
+      $('#containerGiocatori').append(
+        '<div id="Giocatore">'
+          +'<img id="FotoGiocatore" src="football-icon.png" data-id="id">'+'<br>'
+          +'Nome:'+nome+'<br>'
+          +'Cognome:'+cognome+'<br>'
+          +'Data di Nascita:'+dataDiNascita+'<br>'
+          +'Ruolo:'+ruolo
+        +'</div>');
+
+        $('#Giocatore').on("click", function(e){
+          //prende i dati dal giocatore
+          //query che prende le statistiche dal Giocatore
+          console.log("clickk");
+          $('body').prepend('<div id="overlay"></div>');
+        });
+    }
+
+
   </script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="stylesheet" type="text/css" href="style.css">
@@ -35,18 +99,22 @@
   <nav>
     <!-- <i class="fa fa-bars fa-3x"></i> -->
     <h1>SALA SQUAD SEARCH</h1>
+    <p id="easteregg">Luca Poli & Matteo Santoro</p>
   </nav>
   <div class="main">
-    <img src="football-icon.png" width="400px" height="400px">
+    <img id="mainimg" src="football-icon.png" width="400px" height="400px">
     <p id="txtHint">cane</p>
     <div class="search">
-      <select class="select" name="Lega">
+      <select id="selectLega" name="Lega" onchange="updateSquadre($(this).val());">
 
       </select>
-      <select class="select" name="Squadra">
+      <select id="selectSquadra" name="Squadra">
 
       </select>
+      <input type="submit" value="Cerca" onclick="getGiocatori();"></input>
     </div>
+  </div>
+  <div id="containerGiocatori">
   </div>
 </body>
 </html>

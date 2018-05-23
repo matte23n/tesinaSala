@@ -1,3 +1,10 @@
+body{
+  box-sizing: border-box;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
 nav{
   height: 50px;
   width: 90%;
@@ -13,4 +20,38 @@ nav h1{
 .main{
   margin-top: 30px;
   text-align: center;
+}
+
+#easteregg{
+  margin: 0;
+  color: lime;
+}
+
+#containerGiocatori{
+  text-align: center;
+  margin: 0 auto;
+  margin-top: 10px;
+  width:90%;
+  overflow:hidden;
+}
+
+#Giocatore{
+  display:inline-block;
+  background:lime;
+  width:300px;
+  margin: 5px;
+}
+
+#FotoGiocatore{
+  width:40%;
+  height:90%;
+}
+
+#overlay{
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.5);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }

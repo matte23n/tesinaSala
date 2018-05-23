@@ -14,13 +14,32 @@
   $username = "root";
   $password = "";
 
+  $stringData = $_POST['dataString'];
+
   try {
       $conn = new PDO("mysql:host=$servername;dbname=tesina_sala", $username, $password);
       // set the PDO error mode to exception
       $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-      error_log("Connected successfully", 3, "logs/info.log");
       // preparazione della query
-      $sql = $conn->prepare('SELECT * FROM lega');
+      switch($stringData){
+        case 'getLeghe':
+          $sql = $conn->prepare('SELECT * FROM lega');
+          break;
+        case 'getAllSquadre':
+          $sql = $conn->prepare('SELECT * FROM squadra');
+          break;
+        case 'getSquadre':
+          $ID_Lega = $_POST['idLega'];
+          $sql = $conn->prepare('SELECT squadra.ID, squadra.Denominazione FROM squadra WHERE squadra.ID_Lega=:idLega');
+          $sql->bindParam(':idLega', $ID_Lega);
+          break;
+        case 'getGiocatori':
+          $ID_Squadra = $_POST['idSquadra'];
+          $sql = $conn->prepare('SELECT * FROM Calciatori WHERE Calciatori.ID_Squadra=:idSquadra');
+          $sql->bindParam(':idSquadra', $ID_Squadra);
+          break;
+      }
+      //$sql = $conn->prepare('SELECT * FROM lega');
 
       // esecuzione della query
       $sql->execute();
