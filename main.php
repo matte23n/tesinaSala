@@ -38,9 +38,12 @@
           $sql = $conn->prepare('SELECT * FROM Calciatori WHERE Calciatori.ID_Squadra=:idSquadra');
           $sql->bindParam(':idSquadra', $ID_Squadra);
           break;
+        case 'getStatistiche':
+          $ID_Giocatore = $_POST['idGiocatore'];
+          $sql = $conn->prepare('SELECT * FROM statistiche WHERE ID_Calciatore=:idGiocatore');
+          $sql->bindParam(':idGiocatore', $ID_Giocatore);
+          break;
       }
-      //$sql = $conn->prepare('SELECT * FROM lega');
-
       // esecuzione della query
       $sql->execute();
 

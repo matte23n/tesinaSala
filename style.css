@@ -55,3 +55,12 @@ nav h1{
   width: 100%;
   height: 100%;
 }
+
+#Statistiche{
+  text-align: center;
+  margin: 0 auto;
+  margin-top: 10px;
+  width:90%;
+  overflow:hidden;
+  color:aqua;
+}
