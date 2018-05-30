@@ -43,16 +43,52 @@
           $sql = $conn->prepare('SELECT * FROM statistiche WHERE ID_Calciatore=:idGiocatore');
           $sql->bindParam(':idGiocatore', $ID_Giocatore);
           break;
-      }
-      // esecuzione della query
-      $sql->execute();
+        case 'logIn':
+          $usernameUtente = $_POST['username'];
+          $passwordUtente = $_POST['password'];
+          $sql = $conn->prepare('SELECT * FROM utenti where Username=:username');
+          $sql->bindParam(':username', $usernameUtente);
+          $sql->execute();
+          $res = $sql->fetch();
+          $nome = $res['Nome'];
+          $cognome = $res['Cognome'];
+          $utente = $nome." ".$cognome;
+          $password = $res['Password'];
+          if ($password == $passwordUtente) {
+            echo json_encode(array('messaggio' => 'success'));
+            setcookie('utente', $utente, time() + (864000 * 30), "/");
+          }
+          else {
+              $message = "Password errata!!";
+              die(json_encode(array('messaggio' => $message))) ;
+          }
 
-      // creazione di un array dei risultati
-      $res = $sql->fetchAll();
+          //dehash password
+          /*$hash = $row['password'];
+          if(password_verifY($password, $hash)){
+              //echo "password giusta";
+              echo json_encode(array('messaggio' => 'success'));
+              setcookie('utente', $utente, time() + (864000 * 30), "/");
+          }
+          else {
+              //echo "password sbagliata";
+              $message = "Password errata!!";
+              header('HTTP/1.1 500');
+              die(json_encode(array('messaggio' => $message))) ;
+          }*/
+
+      }
+      if ($stringData != 'logIn') {
+        // esecuzione della query
+        $sql->execute();
+
+        // creazione di un array dei risultati
+        $res = $sql->fetchAll();
+        echo json_encode($res);
+        }
       }
   catch(PDOException $e)
       {
       error_log("Connection failed: " . $e->getMessage(), 3, "logs/info.log");
       }
-echo json_encode($res);
 ?>

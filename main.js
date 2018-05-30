@@ -2,8 +2,7 @@ $("#LogIn").on("click", function(e){
   $('body').prepend('<div id="overlayL"></div>');
   $('#overlayL').append('<input type=text id=username placeholder=username></input>');
   $('#overlayL').append('<input type=text id=password placeholder=password></input>');
-  $('#overlayL').append('<button type=button onclick=>LogIn</button>');
-  console.log("cliù");
+  $('#overlayL').append('<button type=button onclick="logIn();">LogIn</button>');
 });
 
 $( document ).ready(function() {
@@ -131,4 +130,24 @@ function appendStatistiche(data){
 
 function richiediInformazioni(idCalciatore){
   //Inserisce una richiesta di informazioni nel database
+}
+
+function logIn(){
+  var username = $('#username').val();
+  var password = $('#password').val();
+  $.ajax({
+    type: "POST",
+    url: 'main.php',
+    data: {'dataString': 'logIn', 'username':username, 'password':password},
+    dataType: 'json',
+    success: function(data)
+    {
+      window.location.href = "paginaSquadra.html";
+      console.log(data);
+    },
+    error: function (e) {
+      obj = JSON.parse(e.responseText);
+      console.log(obj.messaggio);
+    }
+  });
 }
