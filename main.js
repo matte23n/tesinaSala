@@ -1,3 +1,11 @@
+$("#LogIn").on("click", function(e){
+  $('body').prepend('<div id="overlayL"></div>');
+  $('#overlayL').append('<input type=text id=username placeholder=username></input>');
+  $('#overlayL').append('<input type=text id=password placeholder=password></input>');
+  $('#overlayL').append('<button type=button onclick=>LogIn</button>');
+  console.log("cliù");
+});
+
 $( document ).ready(function() {
   $.ajax({
     type: "POST",
@@ -20,7 +28,7 @@ $( document ).ready(function() {
 
   $(document).on('keyup',function(evt) {
       if (evt.keyCode == 27) {
-         $('#overlay').css("display", "none");
+         $('#overlayC').css("display", "none");
          //fa tornare visibile l'immagine principale
          //$('#mainimg').css("display", "");
       }
@@ -81,7 +89,7 @@ function addGiocatore(ID, nome, cognome, dataDiNascita, ruolo){
     +'</div>');
 
   $('[id^="Giocatore"]').unbind('click').click(function(e){
-     $('body').prepend('<div id="overlay"></div>');
+     $('body').prepend('<div id="overlayC"></div>');
      getStatistiche($(this).attr('data-id'));
   });
 }
@@ -106,7 +114,7 @@ function getStatistiche(idGiocatore){
 }
 
 function appendStatistiche(data){
-  $('#overlay').append(
+  $('#overlayC').append(
     '<div id="Statistiche">'
       +'Presenze:'+data[0].Presenze+'<br>'
       +'Gol:'+data[0].Gol+'<br>'
@@ -123,5 +131,4 @@ function appendStatistiche(data){
 
 function richiediInformazioni(idCalciatore){
   //Inserisce una richiesta di informazioni nel database
-  
 }
