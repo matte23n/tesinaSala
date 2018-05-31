@@ -10,12 +10,11 @@
     <h1>SALA SQUAD SEARCH</h1>
   </div>
   <div id="LogIn">
-    <h1>LogIn</h1>
+    <h1 class="login">LogIn</h1>
   </div>
 </nav>
   <div class="main">
     <img id="mainimg" src="football-icon.png" width="400px" height="400px">
-    <p id="txtHint">cane</p>
     <div class="search">
       <select id="selectLega" name="Lega" onchange="updateSquadre($(this).val());"></select>
       <select id="selectSquadra" name="Squadra"></select>
@@ -25,6 +24,7 @@
   <div id="containerGiocatori">
   </div>
 </body>
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script type="text/javascript" src="main.js"></script>
 </html>

@@ -79,3 +79,12 @@ nav h1{
   background-color: lime;
   text-align: center;
 }
+
+#LogOut{
+  width: 10%;
+  margin: 0;
+  display: inline-block;
+  height: 50px;
+  background-color: lime;
+  text-align: center;
+}

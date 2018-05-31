@@ -62,7 +62,12 @@
               $message = "Password errata!!";
               die(json_encode(array('messaggio' => $message))) ;
           }
-
+          break;
+        case 'checkLogIn':
+          if(isset($_COOKIE['utente'])) {
+            echo json_encode(array('messaggio' => 'success'));
+          }
+          break;
           //dehash password
           /*$hash = $row['password'];
           if(password_verifY($password, $hash)){
@@ -78,7 +83,7 @@
           }*/
 
       }
-      if ($stringData != 'logIn') {
+      if ($stringData != 'logIn' && $stringData != 'checkLogIn') {
         // esecuzione della query
         $sql->execute();
 

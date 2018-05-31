@@ -6,6 +6,7 @@ $("#LogIn").on("click", function(e){
 });
 
 $( document ).ready(function() {
+  checkLogIn();
   $.ajax({
     type: "POST",
     url: 'main.php',
@@ -113,19 +114,20 @@ function getStatistiche(idGiocatore){
 }
 
 function appendStatistiche(data){
-  $('#overlayC').append(
-    '<div id="Statistiche">'
-      +'Presenze:'+data[0].Presenze+'<br>'
-      +'Gol:'+data[0].Gol+'<br>'
-      +'Assist:'+data[0].Assist+'<br>'
-      +'Rigori:'+data[0].Rigori+'<br>'
-      +'Minuti giocati:'+data[0][7]+'<br>'
-      +'Cartellini gialli:'+data[0][1]+'<br>'
-      +'Cartellini rossi:'+data[0][2]+'<br>'
-      +'Gol subiti:'+data[0][4]+'<br>'
-      +'<input type="submit" value="Richiedi informazioni" onclick="richiediInformazioni('+data[0].ID_Calciatore+');"></input>'
-    +'</div>'
-  );
+  var statistiche = '<div id="Statistiche">'
+    +'Presenze:'+data[0].Presenze+'<br>'
+    +'Gol:'+data[0].Gol+'<br>'
+    +'Assist:'+data[0].Assist+'<br>'
+    +'Rigori:'+data[0].Rigori+'<br>'
+    +'Minuti giocati:'+data[0][7]+'<br>'
+    +'Cartellini gialli:'+data[0][1]+'<br>'
+    +'Cartellini rossi:'+data[0][2]+'<br>'
+    +'Gol subiti:'+data[0][4]+'<br>';
+    if (!!Cookies.get('utente')) {
+     statistiche += '<input type="submit" value="Richiedi informazioni" onclick="richiediInformazioni('+data[0].ID_Calciatore+');"></input>';
+    }
+    statistiche += '</div>';
+  $('#overlayC').append(statistiche);
 }
 
 function richiediInformazioni(idCalciatore){
@@ -150,4 +152,40 @@ function logIn(){
       console.log(obj.messaggio);
     }
   });
+}
+
+function checkLogIn(){
+  $.ajax({
+    type: "POST",
+    url: 'main.php',
+    data: {'dataString': 'checkLogIn'},
+    dataType: 'json',
+    success: function(data)
+    {
+      $('.login').text('LogOut');
+      $('#LogIn').attr('id','LogOut');
+      $('#LogOut').unbind('click').click(function(f){
+        logOut();
+      });
+    },
+    error: function (e) {
+
+    }
+  });
+}
+
+function logOut(){
+      Cookies.remove('utente');
+      window.location.href = "index.html";
+}
+
+function createCookie(name,value,days) {
+  if (days) {
+      var date = new Date();
+      date.setTime(date.getTime()+(days*24*60*60*1000));
+      var expires = "; expires="+date.toGMTString();
+  }
+  else {var expires = "";
+    document.cookie = name+"="+value+expires+"; path=/";
+  }
 }
