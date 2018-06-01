@@ -124,14 +124,44 @@ function appendStatistiche(data){
     +'Cartellini rossi:'+data[0][2]+'<br>'
     +'Gol subiti:'+data[0][4]+'<br>';
     if (!!Cookies.get('utente')) {
-     statistiche += '<input type="submit" value="Richiedi informazioni" onclick="richiediInformazioni('+data[0].ID_Calciatore+');"></input>';
+     statistiche += '<input type="submit" value="Richiedi informazioni" onclick="showFormTrattativa('+data[0].ID_Calciatore+');"></input>';
     }
     statistiche += '</div>';
   $('#overlayC').append(statistiche);
 }
 
+function showFormTrattativa(data){
+  var formTrattativa = '<div id="Statistiche">'
+    +'<select id="tipologiaRichiesta">'
+      +'<option value="prestito">Prestito</option>'
+      +'<option value="trasferimento">Trasferimento</option>'
+    +'</select>'+'<br>'
+    +'<textarea rows="4" cols="50" id="note" placeholder="Insersci qui una breve descrizione della tua offerta"></textarea>'+'<br>'
+    +'<input type="submit" value="Invia Richiesta" onclick="richiediInformazioni('+data+');">'
+  +'</div>'
+  +'<br>';
+  $('#overlayC').append(formTrattativa);
+}
+
 function richiediInformazioni(idCalciatore){
+  var idUtente = Cookies.get('utente');
+  var tipologiaRichiesta = $('#tipologiaRichiesta').find(":selected").text();
+  var note = $('#note').val();
   //Inserisce una richiesta di informazioni nel database
+  $.ajax({
+    type: "POST",
+    url: 'main.php',
+    data: {'dataString': 'insertTrattativa', 'idUtente':idUtente, 'idGiocatore':idCalciatore, 'tipologiaRichiesta':tipologiaRichiesta, 'note':note},
+    dataType: 'json',
+    success: function(data)
+    {
+      console.log(data);
+    },
+    error: function (e) {
+      obj = JSON.parse(e.responseText);
+      console.log(obj.messaggio);
+    }
+  });
 }
 
 function logIn(){

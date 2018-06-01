@@ -50,13 +50,14 @@
           $sql->bindParam(':username', $usernameUtente);
           $sql->execute();
           $res = $sql->fetch();
-          $nome = $res['Nome'];
-          $cognome = $res['Cognome'];
-          $utente = $nome." ".$cognome;
+          // $nome = $res['Nome'];
+          // $cognome = $res['Cognome'];
+          // $utente = $nome." ".$cognome;
+          $idUtente = $res['ID'];
           $password = $res['Password'];
           if ($password == $passwordUtente) {
             echo json_encode(array('messaggio' => 'success'));
-            setcookie('utente', $utente, time() + (864000 * 30), "/");
+            setcookie('utente', $idUtente, time() + (864000 * 30), "/");
           }
           else {
               $message = "Password errata!!";
@@ -81,19 +82,48 @@
               header('HTTP/1.1 500');
               die(json_encode(array('messaggio' => $message))) ;
           }*/
-
+        case 'insertTrattativa':
+          $ID_Giocatore = $_POST['idGiocatore'];
+          $ID_Utente = $_POST['idUtente'];
+          $sqlIDSquadra = $conn->prepare('SELECT ID_Squadra FROM utenti WHERE ID=:idUtente');
+          $sqlIDSquadra->bindParam(':idUtente', $ID_Utente);
+          $sqlIDSquadra->execute();
+          $resSquadra = $sqlIDSquadra->fetch();
+          $ID_Squadra_Offerente = $resSquadra['ID_Squadra'];
+          $sqlSquadra = $conn->prepare('SELECT ID_Squadra FROM calciatori WHERE ID=:idGiocatore');
+          $sqlSquadra->bindParam(':idGiocatore', $ID_Giocatore);
+          $sqlSquadra->execute();
+          $res = $sqlSquadra->fetch();
+          $ID_Squadra_Ricevente = $res['ID_Squadra'];
+          $tipologiaRichiesta = $_POST['tipologiaRichiesta'];
+          $note = $_POST['note'];
+          $sql = $conn->prepare('INSERT INTO trattative VALUES ("", :idGiocatore, :idSquadraOfferente, :idSquadraRicevente, :tipologiaRichiesta, :note)');
+          $sql->bindParam(':idGiocatore', $ID_Giocatore);
+          $sql->bindParam(':idSquadraOfferente', $ID_Squadra_Offerente);
+          $sql->bindParam(':idSquadraRicevente', $ID_Squadra_Ricevente);
+          $sql->bindParam(':tipologiaRichiesta', $tipologiaRichiesta);
+          $sql->bindParam(':note', $note);
+          break;
       }
       if ($stringData != 'logIn' && $stringData != 'checkLogIn') {
         // esecuzione della query
-        $sql->execute();
+        $executed = $sql->execute();
 
-        // creazione di un array dei risultati
-        $res = $sql->fetchAll();
-        echo json_encode($res);
+        if ($stringData != 'insertTrattativa') {
+          // creazione di un array dei risultati
+          $res = $sql->fetchAll();
+          echo json_encode($res);
+        }
+        else{
+          if ($executed === TRUE) {
+            echo json_encode($executed);
+          }
         }
       }
+  }
   catch(PDOException $e)
       {
-      error_log("Connection failed: " . $e->getMessage(), 3, "logs/info.log");
+        echo 'Connection failed: ' . $e->getMessage();
+      //error_log("Connection failed: " . $e->getMessage(), 3, "logs/info.log");
       }
 ?>
