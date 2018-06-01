@@ -121,9 +121,7 @@
         }
       }
   }
-  catch(PDOException $e)
-      {
-        echo 'Connection failed: ' . $e->getMessage();
-      //error_log("Connection failed: " . $e->getMessage(), 3, "logs/info.log");
-      }
+  catch(PDOException $e){
+    error_log("Connection failed: " . $e->getMessage(), 3, "logs/info.log");
+  }
 ?>
