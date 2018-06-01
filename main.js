@@ -1,7 +1,8 @@
 $("#LogIn").on("click", function(e){
   $('body').prepend('<div id="overlayL"></div>');
+  $('#overlayL').append('<p>Premere ESC per tornare alla schermata principale</p>');
   $('#overlayL').append('<input type=text id=username placeholder=username></input>');
-  $('#overlayL').append('<input type=text id=password placeholder=password></input>');
+  $('#overlayL').append('<input type=password id=password placeholder=password></input>');
   $('#overlayL').append('<button type=button onclick="logIn();">LogIn</button>');
 });
 
@@ -29,6 +30,7 @@ $( document ).ready(function() {
   $(document).on('keyup',function(evt) {
       if (evt.keyCode == 27) {
          $('#overlayC').css("display", "none");
+         $('#overlayL').css("display", "none");
          //fa tornare visibile l'immagine principale
          //$('#mainimg').css("display", "");
       }
@@ -115,6 +117,7 @@ function getStatistiche(idGiocatore){
 
 function appendStatistiche(data){
   var statistiche = '<div id="Statistiche">'
+    +'<p>Premere ESC per tornare alla schermata principale</p>'+'<br>'
     +'Presenze:'+data[0].Presenze+'<br>'
     +'Gol:'+data[0].Gol+'<br>'
     +'Assist:'+data[0].Assist+'<br>'
