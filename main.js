@@ -6,6 +6,10 @@ $("#LogIn").on("click", function(e){
   $('#overlayL').append('<button type=button onclick="logIn();">LogIn</button>');
 });
 
+$("#MyTeam").on("click", function(e){
+  window.location.href = "paginaSquadra.html";
+});
+
 $( document ).ready(function() {
   checkLogIn();
   $.ajax({
@@ -28,7 +32,6 @@ $( document ).ready(function() {
   updateSquadre(1);
 
   if (!!Cookies.get('utente')) {
-    createTableStatistiche();
     $.ajax({
       type: "POST",
       url: 'main.php',
@@ -151,14 +154,17 @@ function createTableStatistiche(){
       console.log(data);
       data.forEach(function(entry) {
         $('#tableStatistiche').append(
-            '<tr>'+entry.Presenze+'</tr>'
-            +'<tr>'+entry.Gol+'</tr>'
-            +'<tr>'+entry.Assist+'</tr>'
-            +'<tr>'+entry.Rigori+'</tr>'
-            +'<tr>'+entry['Minuti Giocati']+'</tr>'
-            +'<tr>'+entry['Cartellini Gialli']+'</tr>'
-            +'<tr>'+entry['Cartellini Rossi']+'</tr>'
-            +'<tr>'+entry['Gol Subiti']+'</tr>'
+          '<tr>'
+            +'<td>'+entry.Nome + ' ' + entry.Cognome+'</td>'
+            +'<td>'+entry.Presenze+'</td>'
+            +'<td>'+entry.Gol+'</td>'
+            +'<td>'+entry.Assist+'</td>'
+            +'<td>'+entry.Rigori+'</td>'
+            +'<td>'+entry['Minuti Giocati']+'</td>'
+            +'<td>'+entry['Cartellini Gialli']+'</td>'
+            +'<td>'+entry['Cartellini Rossi']+'</td>'
+            +'<td>'+entry['Gol Subiti']+'</td>'
+          +'</tr>'
         );
       });
     },
@@ -213,6 +219,7 @@ function richiediInformazioni(idCalciatore){
     success: function(data)
     {
       console.log(data);
+      $('#overlayC').css("display", "none");
     },
     error: function (e) {
       obj = JSON.parse(e.responseText);
@@ -251,7 +258,7 @@ function checkLogIn(){
     {
       $('.login').text('LogOut');
       $('#LogIn').attr('id','LogOut');
-      $('#MyTeam').test('La mia squadra');
+      $('#MyTeam').text('La mia squadra');
       $('#LogOut').unbind('click').click(function(f){
         logOut();
       });
