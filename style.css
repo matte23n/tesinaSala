@@ -88,3 +88,8 @@ nav h1{
   background-color: lime;
   text-align: center;
 }
+
+#MyTeam{
+  width: 100%;
+  text-align: right;
+}
