@@ -53,7 +53,7 @@
           // $nome = $res['Nome'];
           // $cognome = $res['Cognome'];
           // $utente = $nome." ".$cognome;
-          $idUtente = $res['ID'];
+          $idUtente = $res['ID_Squadra'];
           $password = $res['Password'];
           if ($password == $passwordUtente) {
             echo json_encode(array('messaggio' => 'success'));
@@ -84,12 +84,7 @@
           }*/
         case 'insertTrattativa':
           $ID_Giocatore = $_POST['idGiocatore'];
-          $ID_Utente = $_POST['idUtente'];
-          $sqlIDSquadra = $conn->prepare('SELECT ID_Squadra FROM utenti WHERE ID=:idUtente');
-          $sqlIDSquadra->bindParam(':idUtente', $ID_Utente);
-          $sqlIDSquadra->execute();
-          $resSquadra = $sqlIDSquadra->fetch();
-          $ID_Squadra_Offerente = $resSquadra['ID_Squadra'];
+          $ID_Squadra_Offerente = $_POST['idSquadraOfferente'];
           $sqlSquadra = $conn->prepare('SELECT ID_Squadra FROM calciatori WHERE ID=:idGiocatore');
           $sqlSquadra->bindParam(':idGiocatore', $ID_Giocatore);
           $sqlSquadra->execute();
@@ -103,6 +98,21 @@
           $sql->bindParam(':idSquadraRicevente', $ID_Squadra_Ricevente);
           $sql->bindParam(':tipologiaRichiesta', $tipologiaRichiesta);
           $sql->bindParam(':note', $note);
+          break;
+        case 'getTrattative':
+          $ID_Utente = $_POST['idUtente'];
+          $sqlIDSquadra = $conn->prepare('SELECT ID_Squadra FROM utenti WHERE ID=:idUtente');
+          $sqlIDSquadra->bindParam(':idUtente', $ID_Utente);
+          $sqlIDSquadra->execute();
+          $resSquadra = $sqlIDSquadra->fetch();
+          $ID_Squadra_Ricevente = $resSquadra['ID_Squadra'];
+          $sql = $conn->prepare('SELECT * FROM trattative WHERE ID_Squadra_Ricevente=:idSquadraRicevente');
+          $sql->bindParam(':idSquadraRicevente', $ID_Squadra_Ricevente);
+          break;
+        case 'getStatisticheSquadra':
+          $ID_Squadra = $_POST['idSquadra'];
+          $sql = $conn->prepare('SELECT * FROM statistiche, calciatori WHERE statistiche.ID_Calciatore=calciatori.ID AND calciatori.ID_Squadra=:idSquadra');
+          $sql->bindParam(':idSquadra', $ID_Squadra);
           break;
       }
       if ($stringData != 'logIn' && $stringData != 'checkLogIn') {

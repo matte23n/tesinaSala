@@ -27,6 +27,25 @@ $( document ).ready(function() {
   });
   updateSquadre(1);
 
+  if (!!Cookies.get('utente')) {
+    createTableStatistiche();
+    $.ajax({
+      type: "POST",
+      url: 'main.php',
+      data: {'dataString': 'getTrattative', idUtente:Cookies.get('utente')},
+      dataType: 'json',
+      success: function(data)
+      {
+        console.log(data);
+        $('#selectLega').append('<option value="' + data.length + '">' + 'Hai ' + data.length + ' trattative aperte' + '</option>');
+      },
+      error: function (xhr, ajaxOptions, thrownError) {
+        console.log(xhr.status);
+        console.log(thrownError);
+      }
+    });
+  }
+
   $(document).on('keyup',function(evt) {
       if (evt.keyCode == 27) {
          $('#overlayC').css("display", "none");
@@ -115,6 +134,39 @@ function getStatistiche(idGiocatore){
   });
 }
 
+function createTableStatistiche(){
+  if (!!Cookies.get('utente')) {
+   var idSquadra = Cookies.get('utente');
+  }
+  //query che prende le statistiche dei giocatori di una squadra
+  $.ajax({
+    type: "POST",
+    url: 'main.php',
+    data: {'dataString': 'getStatisticheSquadra', 'idSquadra':idSquadra},
+    dataType: 'json',
+    success: function(data)
+    {
+      console.log(data);
+      data.forEach(function(entry) {
+        $('#tableStatistiche').append(
+            '<tr>'+entry.Presenze+'</tr>'
+            +'<tr>'+entry.Gol+'</tr>'
+            +'<tr>'+entry.Assist+'</tr>'
+            +'<tr>'+entry.Rigori+'</tr>'
+            +'<tr>'+entry['Minuti Giocati']+'</tr>'
+            +'<tr>'+entry['Cartellini Gialli']+'</tr>'
+            +'<tr>'+entry['Cartellini Rossi']+'</tr>'
+            +'<tr>'+entry['Gol Subiti']+'</tr>'
+        );
+      });
+    },
+    error: function (xhr, ajaxOptions, thrownError) {
+      console.log(xhr.status);
+      console.log(thrownError);
+    }
+  });
+}
+
 function appendStatistiche(data){
   var statistiche = '<div id="Statistiche">'
     +'<p>Premere ESC per tornare alla schermata principale</p>'+'<br>'
@@ -122,10 +174,10 @@ function appendStatistiche(data){
     +'Gol:'+data[0].Gol+'<br>'
     +'Assist:'+data[0].Assist+'<br>'
     +'Rigori:'+data[0].Rigori+'<br>'
-    +'Minuti giocati:'+data[0][7]+'<br>'
-    +'Cartellini gialli:'+data[0][1]+'<br>'
-    +'Cartellini rossi:'+data[0][2]+'<br>'
-    +'Gol subiti:'+data[0][4]+'<br>';
+    +'Minuti giocati:'+data[0]['Minuti Giocati']+'<br>'
+    +'Cartellini gialli:'+data[0]['Cartellini Gialli']+'<br>'
+    +'Cartellini rossi:'+data[0]['Cartellini Rossi']+'<br>'
+    +'Gol subiti:'+data[0]['Gol Subiti']+'<br>';
     if (!!Cookies.get('utente')) {
      statistiche += '<input type="submit" value="Richiedi informazioni" onclick="showFormTrattativa('+data[0].ID_Calciatore+');"></input>';
     }
@@ -147,14 +199,14 @@ function showFormTrattativa(data){
 }
 
 function richiediInformazioni(idCalciatore){
-  var idUtente = Cookies.get('utente');
+  var idSquadra = Cookies.get('utente');
   var tipologiaRichiesta = $('#tipologiaRichiesta').find(":selected").text();
   var note = $('#note').val();
   //Inserisce una richiesta di informazioni nel database
   $.ajax({
     type: "POST",
     url: 'main.php',
-    data: {'dataString': 'insertTrattativa', 'idUtente':idUtente, 'idGiocatore':idCalciatore, 'tipologiaRichiesta':tipologiaRichiesta, 'note':note},
+    data: {'dataString': 'insertTrattativa', 'idSquadraOfferente':idSquadra, 'idGiocatore':idCalciatore, 'tipologiaRichiesta':tipologiaRichiesta, 'note':note},
     dataType: 'json',
     success: function(data)
     {
