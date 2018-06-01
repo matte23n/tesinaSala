@@ -55,6 +55,7 @@ $( document ).ready(function() {
       }
   });
 });
+
 function updateSquadre(idSquadra) {
   $('#selectSquadra').empty();
   $.ajax({
@@ -75,6 +76,7 @@ function updateSquadre(idSquadra) {
     }
   });
 }
+
 function getGiocatori() {
   var contentToRemove = document.querySelectorAll("#Giocatore");
   $(contentToRemove).remove();
@@ -249,6 +251,7 @@ function checkLogIn(){
     {
       $('.login').text('LogOut');
       $('#LogIn').attr('id','LogOut');
+      $('#MyTeam').test('La mia squadra');
       $('#LogOut').unbind('click').click(function(f){
         logOut();
       });
