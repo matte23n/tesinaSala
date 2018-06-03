@@ -4,12 +4,30 @@
   <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script type="text/javascript" src="main.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      createTableStatistiche();
+      getTrattative();
+    });
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" type="text/css" href="style.css">
   <!--<meta http-equiv="refresh" content="5; url=index.html" />-->
   <title>LOGIN EFFETTUATO</title>
 </head>
 <body>
+  <nav>
+    <div id="Titolo">
+      <h1>SALA SQUAD SEARCH</h1>
+    </div>
+    <div id="LogIn">
+      <h1 class="login">LogIn</h1>
+    </div>
+    <div id="Home">
+
+    </div>
+  </nav>
   <!-- LOGIN EFFETTUATO CON SUCCESSO!
   Verrai reindirizzato in homepage tra 5 secondi, se ciò non succede clicca <a href="index.html">qui</a> -->
   <table id="tableStatistiche">
@@ -25,11 +43,8 @@
       <td>Gol Subiti</td>
     </tr>
   </table>
-  <script type="text/javascript">
-    $(function() {
-      createTableStatistiche();
-    });
-  </script>
+  <p id="aggiornamentoStatistiche"></p>
+  <p id="trattative"></p>
 </body>
 
 </html>

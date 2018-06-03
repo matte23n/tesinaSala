@@ -12,6 +12,10 @@ $("#MyTeam").on("click", function(e){
 
 $( document ).ready(function() {
   checkLogIn();
+  $('#Home').text('Home Page');
+  $("#Home").on("click", function(e){
+    window.location.href = "index.html";
+  });
   $.ajax({
     type: "POST",
     url: 'main.php',
@@ -31,24 +35,6 @@ $( document ).ready(function() {
   });
   updateSquadre(1);
 
-  if (!!Cookies.get('utente')) {
-    $.ajax({
-      type: "POST",
-      url: 'main.php',
-      data: {'dataString': 'getTrattative', idUtente:Cookies.get('utente')},
-      dataType: 'json',
-      success: function(data)
-      {
-        console.log(data);
-        $('#selectLega').append('<option value="' + data.length + '">' + 'Hai ' + data.length + ' trattative aperte' + '</option>');
-      },
-      error: function (xhr, ajaxOptions, thrownError) {
-        console.log(xhr.status);
-        console.log(thrownError);
-      }
-    });
-  }
-
   $(document).on('keyup',function(evt) {
       if (evt.keyCode == 27) {
          $('#overlayC').css("display", "none");
@@ -58,6 +44,51 @@ $( document ).ready(function() {
       }
   });
 });
+
+function getTrattative(){
+  if (!!Cookies.get('utente')) {
+    $.ajax({
+      type: "POST",
+      url: 'main.php',
+      data: {'dataString': 'getTrattative', idUtente:Cookies.get('utente')},
+      dataType: 'json',
+      success: function(data)
+      {
+        console.log(data);
+        $('#trattative').text('Hai ricevuto ' + data.length + ' trattative');
+        if (data.length>0) {
+          $('#trattative').append(':<br>');
+          $('#trattative').append('<table id="tableTrattative">'
+          +'<tr>'
+            +'<td>Giocatore</td>'
+            +'<td>Squadra Offerente</td>'
+            +'<td>Tipologia Offerta</td>'
+            +'<td>Note</td>'
+          +'</tr>'
+        +'</table>');
+        }
+        for (var i = 0; i < data.length; i++) {
+            var ID_Giocatore = data[i].ID_Giocatore
+            var ID_Squadra_Offerente = data[i].ID_Squadra_Offerente
+            var Tipologia_Trattativa = data[i].Tipologia_Trattativa
+            var note = data[i].Note
+            $('#tableTrattative').append('<tr>'
+              +'<td>'+ID_Giocatore+'</td>'
+              +'<td>'+ID_Squadra_Offerente+'</td>'
+              +'<td>'+Tipologia_Trattativa+'</td>'
+              +'<td>'+note+'</td>'
+            +'</tr>');
+            //$('#trattative').append(ID_Giocatore + ' ' + ID_Squadra_Offerente + ' ' + Tipologia_Trattativa + ' ' + note + '<br>');
+        }
+        //$('#trattative').append();
+      },
+      error: function (xhr, ajaxOptions, thrownError) {
+        console.log(xhr.status);
+        console.log(thrownError);
+      }
+    });
+  }
+}
 
 function updateSquadre(idSquadra) {
   $('#selectSquadra').empty();
@@ -154,16 +185,17 @@ function createTableStatistiche(){
       console.log(data);
       data.forEach(function(entry) {
         $('#tableStatistiche').append(
-          '<tr>'
-            +'<td>'+entry.Nome + ' ' + entry.Cognome+'</td>'
-            +'<td>'+entry.Presenze+'</td>'
-            +'<td>'+entry.Gol+'</td>'
-            +'<td>'+entry.Assist+'</td>'
-            +'<td>'+entry.Rigori+'</td>'
-            +'<td>'+entry['Minuti Giocati']+'</td>'
-            +'<td>'+entry['Cartellini Gialli']+'</td>'
-            +'<td>'+entry['Cartellini Rossi']+'</td>'
-            +'<td>'+entry['Gol Subiti']+'</td>'
+          '<tr id="'+entry.ID_Calciatore+'">'
+            +'<td id="Nome">'+entry.Nome + ' ' + entry.Cognome+'</td>'
+            +'<td id="Presenze" contenteditable="true">'+entry.Presenze+'</td>'
+            +'<td id="Gol" contenteditable="true">'+entry.Gol+'</td>'
+            +'<td id="Assist" contenteditable="true">'+entry.Assist+'</td>'
+            +'<td id="Rigori" contenteditable="true">'+entry.Rigori+'</td>'
+            +'<td id="Minuti_Giocati" contenteditable="true">'+entry['Minuti Giocati']+'</td>'
+            +'<td id="Cartellini_Gialli" contenteditable="true">'+entry['Cartellini Gialli']+'</td>'
+            +'<td id="Cartellini_Rossi" contenteditable="true">'+entry['Cartellini Rossi']+'</td>'
+            +'<td id="Gol_Subiti" contenteditable="true">'+entry['Gol Subiti']+'</td>'
+            +'<td><input type="submit" value="Aggiorna" onclick="aggiornaStatistiche('+entry.ID_Calciatore+')"></input></td>'
           +'</tr>'
         );
       });
@@ -171,6 +203,33 @@ function createTableStatistiche(){
     error: function (xhr, ajaxOptions, thrownError) {
       console.log(xhr.status);
       console.log(thrownError);
+    }
+  });
+}
+
+function aggiornaStatistiche(idCalciatore){
+  var presenze = ($('tr#'+idCalciatore+' td#Presenze').text());
+  var gol = ($('tr#'+idCalciatore+' td#Gol').text());
+  var assist = ($('tr#'+idCalciatore+' td#Assist').text());
+  var rigori = ($('tr#'+idCalciatore+' td#Rigori').text());
+  var minuti = ($('tr#'+idCalciatore+' td#Minuti_Giocati').text());
+  var cartelliniGialli = ($('tr#'+idCalciatore+' td#Cartellini_Gialli').text());
+  var cartelliniRossi = ($('tr#'+idCalciatore+' td#Cartellini_Rossi').text());
+  var golSubiti = ($('tr#'+idCalciatore+' td#Gol_Subiti').text());
+  $.ajax({
+    type: "POST",
+    url: 'main.php',
+    data: {'dataString': 'aggiornaStatistiche', 'idCalciatore':idCalciatore, 'presenze':presenze, 'gol':gol, 'assist':assist, 'rigori':rigori,
+           'minuti':minuti, 'cartelliniGialli':cartelliniGialli, 'cartelliniRossi':cartelliniRossi, 'golSubiti':golSubiti},
+    dataType: 'json',
+    success: function(data)
+    {
+      console.log(data);
+      $('#aggiornamentoStatistiche').text("Statistiche aggiornate con successo!");
+    },
+    error: function (e) {
+      obj = JSON.parse(e.responseText);
+      console.log(obj.messaggio);
     }
   });
 }

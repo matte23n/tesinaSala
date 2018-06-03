@@ -114,12 +114,35 @@
           $sql = $conn->prepare('SELECT * FROM statistiche, calciatori WHERE statistiche.ID_Calciatore=calciatori.ID AND calciatori.ID_Squadra=:idSquadra');
           $sql->bindParam(':idSquadra', $ID_Squadra);
           break;
+        case 'aggiornaStatistiche':
+          $ID_Calciatore = $_POST['idCalciatore'];
+          $presenze = $_POST['presenze'];
+          $gol = $_POST['gol'];
+          $assist = $_POST['assist'];
+          $rigori = $_POST['rigori'];
+          $minuti = $_POST['minuti'];
+          $cartelliniGialli = $_POST['cartelliniGialli'];
+          $cartelliniRossi = $_POST['cartelliniRossi'];
+          $golSubiti = $_POST['golSubiti'];
+          $sql = $conn->prepare('UPDATE statistiche SET Presenze=:presenze, Gol=:gol, Assist=:assist, Rigori=:rigori, `Minuti Giocati`=:minutiGiocati, `Cartellini Gialli`=:cartelliniGialli,
+                                 `Cartellini Rossi`=:cartelliniRossi, `Gol Subiti`=:golSubiti
+                                 WHERE ID_Calciatore=:ID_Calciatore');
+          $sql->bindParam(':ID_Calciatore', $ID_Calciatore);
+          $sql->bindParam(':presenze', $presenze);
+          $sql->bindParam(':gol', $gol);
+          $sql->bindParam(':assist', $assist);
+          $sql->bindParam(':rigori', $rigori);
+          $sql->bindParam(':minutiGiocati', $minuti);
+          $sql->bindParam(':cartelliniGialli', $cartelliniGialli);
+          $sql->bindParam(':cartelliniRossi', $cartelliniRossi);
+          $sql->bindParam(':golSubiti', $golSubiti);
+          break;
       }
       if ($stringData != 'logIn' && $stringData != 'checkLogIn') {
         // esecuzione della query
         $executed = $sql->execute();
 
-        if ($stringData != 'insertTrattativa') {
+        if ($stringData != 'insertTrattativa' && $stringData != 'aggiornaStatistiche') {
           // creazione di un array dei risultati
           $res = $sql->fetchAll();
           echo json_encode($res);

@@ -89,7 +89,17 @@ nav h1{
   text-align: center;
 }
 
+table, th, td{
+  border: 1px solid black;
+}
+
 #MyTeam{
+  width: 100%;
+  text-align: right;
+  margin: 0px -33px;
+}
+
+#Home{
   width: 100%;
   text-align: right;
   margin: 0px -33px;
