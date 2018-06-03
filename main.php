@@ -33,10 +33,20 @@
           $sql = $conn->prepare('SELECT squadra.ID, squadra.Denominazione FROM squadra WHERE squadra.ID_Lega=:idLega');
           $sql->bindParam(':idLega', $ID_Lega);
           break;
+        case 'getNomeSquadra':
+          $ID_Squadra = $_POST['idSquadra'];
+          $sql = $conn->prepare('SELECT Denominazione FROM squadra WHERE ID=:idSquadra');
+          $sql->bindParam(':idSquadra', $ID_Squadra);
+          break;
         case 'getGiocatori':
           $ID_Squadra = $_POST['idSquadra'];
           $sql = $conn->prepare('SELECT * FROM Calciatori WHERE Calciatori.ID_Squadra=:idSquadra');
           $sql->bindParam(':idSquadra', $ID_Squadra);
+          break;
+        case 'getNomeGiocatore':
+          $ID_Calciatore = $_POST['idCalciatore'];
+          $sql = $conn->prepare('SELECT Nome, Cognome FROM Calciatori WHERE Calciatori.ID=:idCalciatore');
+          $sql->bindParam(':idCalciatore', $ID_Calciatore);
           break;
         case 'getStatistiche':
           $ID_Giocatore = $_POST['idGiocatore'];

@@ -72,9 +72,11 @@ function getTrattative(){
             var ID_Squadra_Offerente = data[i].ID_Squadra_Offerente
             var Tipologia_Trattativa = data[i].Tipologia_Trattativa
             var note = data[i].Note
+            var nomeGiocatore = getNomeGiocatore(ID_Giocatore);
+            var nomeSquadra = getNomeSquadra(ID_Squadra_Offerente);
             $('#tableTrattative').append('<tr>'
-              +'<td>'+ID_Giocatore+'</td>'
-              +'<td>'+ID_Squadra_Offerente+'</td>'
+              +'<td>'+nomeGiocatore[0].Nome+' '+nomeGiocatore[0].Cognome+'</td>'
+              +'<td>'+nomeSquadra[0].Denominazione+'</td>'
               +'<td>'+Tipologia_Trattativa+'</td>'
               +'<td>'+note+'</td>'
             +'</tr>');
@@ -88,6 +90,46 @@ function getTrattative(){
       }
     });
   }
+}
+
+function getNomeGiocatore(idCalciatore){
+  var tmp;
+  $.ajax({
+    async: false,
+    type: "POST",
+    url: 'main.php',
+    data: {'dataString': 'getNomeGiocatore', 'idCalciatore':idCalciatore},
+    dataType: 'json',
+    success: function(data)
+    {
+      tmp = data;
+    },
+    error: function (xhr, ajaxOptions, thrownError) {
+      console.log(xhr.status);
+      console.log(thrownError);
+    }
+  });
+  return tmp;
+}
+
+function getNomeSquadra(idSquadra){
+  var tmp;
+  $.ajax({
+    async: false,
+    type: "POST",
+    url: 'main.php',
+    data: {'dataString': 'getNomeSquadra', 'idSquadra':idSquadra},
+    dataType: 'json',
+    success: function(data)
+    {
+      tmp = data;
+    },
+    error: function (xhr, ajaxOptions, thrownError) {
+      console.log(xhr.status);
+      console.log(thrownError);
+    }
+  });
+  return tmp;
 }
 
 function updateSquadre(idSquadra) {
