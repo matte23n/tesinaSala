@@ -104,3 +104,27 @@ table, th, td{
   text-align: right;
   margin: 0px -33px;
 }
+
+.Message{
+  width: 1000px;
+  position:  relative;
+  height: 700px;
+  background-color:  red;
+  margin:  0 auto;
+  margin-top:  50px;
+}
+
+.listMessage{
+  position:  absolute;
+  background-color:  blue;
+  height: 700px;
+  width:  400px;
+}
+
+.Chat{
+  background-color: yellow;
+  height: 700px;
+  width: 600px;
+  right:  0;
+  position:  absolute;
+}

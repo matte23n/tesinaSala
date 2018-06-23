@@ -329,6 +329,100 @@ function richiediInformazioni(idCalciatore){
   });
 }
 
+function getTrattativeMessaggi(){
+  var idSquadra = Cookies.get('utente');
+  //Inserisce una richiesta di informazioni nel database
+  $.ajax({
+    type: "POST",
+    url: 'main.php',
+    data: {'dataString': 'getTrattativeMessaggi', 'idSquadra':idSquadra},
+    dataType: 'json',
+    success: function(data)
+    {
+      console.log(data);
+    },
+    error: function (e) {
+      obj = JSON.parse(e.responseText);
+      console.log(obj.messaggio);
+    }
+  });
+}
+
+function getMessaggi(){
+  if (!!Cookies.get('utente')) {
+    $.ajax({
+      type: "POST",
+      url: 'main.php',
+      data: {'dataString': 'getTrattativeMessaggi', idSquadra:Cookies.get('utente')},
+      dataType: 'json',
+      success: function(data)
+      {
+        console.log(data);
+        $('#messaggi').text('Hai ricevuto ' + data.length + ' messaggi');
+        if (data.length>0) {
+          $('#messaggi').append(':<br>');
+          $('#messaggi').append('<table id="tableMessaggi">'
+          +'<tr>'
+            +'<td>Squadra Inviante</td>'
+            +'<td>Data</td>'
+            +'<td>Testo</td>'
+          +'</tr>'
+        +'</table>');
+        }
+        for (var i = 0; i < data.length; i++) {
+            var ID_Mittente = data[i].ID_Mittente
+            var dataInvio = data[i].Data
+            var testo = data[i].Testo
+            var nomeSquadra = getNomeSquadra(ID_Mittente);
+            $('#tableMessaggi').append('<tr>'
+              +'<td>'+nomeSquadra[0].Denominazione+'</td>'
+              +'<td>'+dataInvio+'</td>'
+              +'<td>'+testo+'</td>'
+              +'<td><input type="submit" value="Rispondi" onclick="rispondi('+data[i].ID_Trattativa+')"></input></td>'
+            +'</tr>');
+            //$('#trattative').append(ID_Giocatore + ' ' + ID_Squadra_Offerente + ' ' + Tipologia_Trattativa + ' ' + note + '<br>');
+        }
+        //$('#trattative').append();
+      },
+      error: function (xhr, ajaxOptions, thrownError) {
+        console.log(xhr.status);
+        console.log(thrownError);
+      }
+    });
+  }
+}
+
+function rispondi(idTrattativa){
+  $('body').prepend('<div id="overlayC"></div>');
+  var formMessaggio = '<div id="Messaggio">'
+    +'<textarea rows="4" cols="50" id="textMessaggio" placeholder="Insersci qui il messaggio da inviare alla squadra"></textarea>'+'<br>'
+    +'<input type="submit" value="Invia Messaggio" onclick="inviaMessaggio('+idTrattativa+');">'
+  +'</div>'
+  +'<br>';
+  $('#overlayC').append(formMessaggio);
+}
+
+function inviaMessaggio(idTrattativa){
+  var idSquadra = Cookies.get('utente');
+  var testo = $('#textMessaggio').val();
+  //Inserisce una richiesta di informazioni nel database
+  $.ajax({
+    type: "POST",
+    url: 'main.php',
+    data: {'dataString': 'insertMessaggio', 'idTrattativa':idTrattativa, 'idMittente':idSquadra, 'textMessaggio':testo},
+    dataType: 'json',
+    success: function(data)
+    {
+      console.log(data);
+      $('#overlayC').css("display", "none");
+    },
+    error: function (e) {
+      obj = JSON.parse(e.responseText);
+      console.log(obj.messaggio);
+    }
+  });
+}
+
 function logIn(){
   var username = $('#username').val();
   var password = $('#password').val();

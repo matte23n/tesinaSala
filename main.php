@@ -60,9 +60,6 @@
           $sql->bindParam(':username', $usernameUtente);
           $sql->execute();
           $res = $sql->fetch();
-          // $nome = $res['Nome'];
-          // $cognome = $res['Cognome'];
-          // $utente = $nome." ".$cognome;
           $idUtente = $res['ID_Squadra'];
           $password = $res['Password'];
           if ($password == $passwordUtente) {
@@ -111,13 +108,8 @@
           break;
         case 'getTrattative':
           $ID_Utente = $_POST['idUtente'];
-          $sqlIDSquadra = $conn->prepare('SELECT ID_Squadra FROM utenti WHERE ID=:idUtente');
-          $sqlIDSquadra->bindParam(':idUtente', $ID_Utente);
-          $sqlIDSquadra->execute();
-          $resSquadra = $sqlIDSquadra->fetch();
-          $ID_Squadra_Ricevente = $resSquadra['ID_Squadra'];
           $sql = $conn->prepare('SELECT * FROM trattative WHERE ID_Squadra_Ricevente=:idSquadraRicevente');
-          $sql->bindParam(':idSquadraRicevente', $ID_Squadra_Ricevente);
+          $sql->bindParam(':idSquadraRicevente', $ID_Utente);
           break;
         case 'getStatisticheSquadra':
           $ID_Squadra = $_POST['idSquadra'];
@@ -147,12 +139,27 @@
           $sql->bindParam(':cartelliniRossi', $cartelliniRossi);
           $sql->bindParam(':golSubiti', $golSubiti);
           break;
+        case 'getTrattativeMessaggi':
+          $ID_Squadra = $_POST['idSquadra'];
+          $sql = $conn->prepare('SELECT * FROM messaggi WHERE ID_Trattativa IN '.'('.'SELECT ID FROM trattative WHERE ID_Squadra_Ricevente=:idSquadra OR ID_Squadra_Offerente=:idSquadra)');
+          $sql->bindParam(':idSquadra', $ID_Squadra);
+          break;
+        case 'insertMessaggio':
+          $ID_Trattativa = $_POST['idTrattativa'];
+          $ID_Squadra_Mittente = $_POST['idMittente'];
+          $testo = $_POST['textMessaggio'];
+          $sql = $conn->prepare('INSERT INTO messaggi VALUES ("", :idTrattativa, :idMittente, now(), :testo, 0)');
+          $sql->bindParam(':idTrattativa', $ID_Trattativa);
+          $sql->bindParam(':idMittente', $ID_Squadra_Mittente);
+          //$sql->bindParam(':data', $ID_Squadra_Ricevente);
+          $sql->bindParam(':testo', $testo);
+          break;
       }
       if ($stringData != 'logIn' && $stringData != 'checkLogIn') {
         // esecuzione della query
         $executed = $sql->execute();
 
-        if ($stringData != 'insertTrattativa' && $stringData != 'aggiornaStatistiche') {
+        if ($stringData != 'insertTrattativa' && $stringData != 'aggiornaStatistiche' && $stringData != 'insertMessaggio') {
           // creazione di un array dei risultati
           $res = $sql->fetchAll();
           echo json_encode($res);
