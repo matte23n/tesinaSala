@@ -40,12 +40,12 @@
           break;
         case 'getGiocatori':
           $ID_Squadra = $_POST['idSquadra'];
-          $sql = $conn->prepare('SELECT * FROM Calciatori WHERE Calciatori.ID_Squadra=:idSquadra');
+          $sql = $conn->prepare('SELECT * FROM calciatori WHERE Calciatori.ID_Squadra=:idSquadra');
           $sql->bindParam(':idSquadra', $ID_Squadra);
           break;
         case 'getNomeGiocatore':
           $ID_Calciatore = $_POST['idCalciatore'];
-          $sql = $conn->prepare('SELECT Nome, Cognome FROM Calciatori WHERE Calciatori.ID=:idCalciatore');
+          $sql = $conn->prepare('SELECT Nome, Cognome FROM calciatori WHERE Calciatori.ID=:idCalciatore');
           $sql->bindParam(':idCalciatore', $ID_Calciatore);
           break;
         case 'getStatistiche':
@@ -141,8 +141,20 @@
           break;
         case 'getTrattativeMessaggi':
           $ID_Squadra = $_POST['idSquadra'];
-          $sql = $conn->prepare('SELECT * FROM messaggi WHERE ID_Trattativa IN '.'('.'SELECT ID FROM trattative WHERE ID_Squadra_Ricevente=:idSquadra OR ID_Squadra_Offerente=:idSquadra)');
+          $sql = $conn->prepare('SELECT * FROM messaggi WHERE ID_Trattativa IN '.'('.'SELECT ID FROM trattative WHERE ID_Squadra_Ricevente=:idSquadra OR ID_Squadra_Offerente=:idSquadra) AND ID_Mittente <> :idSquadra GROUP BY ID_Mittente');
           $sql->bindParam(':idSquadra', $ID_Squadra);
+          break;
+        case 'getMessageText':
+          $ID_Squadra = $_POST['idSquadra'];
+          $ID_Mittente = $_POST['idMittente'];
+          $sql = $conn->prepare('SELECT ID_Mittente, Data, Testo FROM messaggi WHERE ID_Trattativa IN '.'('.'SELECT ID FROM trattative WHERE ((ID_Squadra_Ricevente=:idSquadra AND ID_Squadra_Offerente=:idMittente) OR (ID_Squadra_Ricevente=:idMittente AND ID_Squadra_Offerente=:idSquadra)))');
+          $sql->bindParam(':idSquadra', $ID_Squadra);
+          $sql->bindParam(':idMittente', $ID_Mittente);
+          break;
+        case 'setLetto':
+          $ID_Trattativa = $_POST['idTrattativa'];
+          $sql = $conn->prepare('UPDATE messaggi SET Letto = 1 WHERE ID_Trattativa=:idTrattativa');
+          $sql->bindParam(':idTrattativa', $ID_Trattativa);
           break;
         case 'insertMessaggio':
           $ID_Trattativa = $_POST['idTrattativa'];
@@ -151,7 +163,6 @@
           $sql = $conn->prepare('INSERT INTO messaggi VALUES ("", :idTrattativa, :idMittente, now(), :testo, 0)');
           $sql->bindParam(':idTrattativa', $ID_Trattativa);
           $sql->bindParam(':idMittente', $ID_Squadra_Mittente);
-          //$sql->bindParam(':data', $ID_Squadra_Ricevente);
           $sql->bindParam(':testo', $testo);
           break;
       }
@@ -159,7 +170,7 @@
         // esecuzione della query
         $executed = $sql->execute();
 
-        if ($stringData != 'insertTrattativa' && $stringData != 'aggiornaStatistiche' && $stringData != 'insertMessaggio') {
+        if ($stringData != 'insertTrattativa' && $stringData != 'aggiornaStatistiche' && $stringData != 'insertMessaggio' && $stringData != 'setLetto') {
           // creazione di un array dei risultati
           $res = $sql->fetchAll();
           echo json_encode($res);

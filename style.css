@@ -93,7 +93,7 @@ table, th, td{
   border: 1px solid black;
 }
 
-#MyTeam{
+#MyTeam, #MSG{
   width: 100%;
   text-align: right;
   margin: 0px -33px;
@@ -119,12 +119,53 @@ table, th, td{
   background-color:  blue;
   height: 700px;
   width:  400px;
+  overflow: auto;
+}
+
+.listMessage div{
+  text-align: center;
+  margin: 10px 10px;
+  background-color: white;
+}
+
+.nletto{
+  border: 1px solid red;
 }
 
 .Chat{
   background-color: yellow;
-  height: 700px;
+  height: 650px;
   width: 600px;
   right:  0;
   position:  absolute;
+  overflow: auto;
+}
+
+.Chat div{
+  text-align: center;
+  background-color: white;
+  margin: 10px 10px;
+}
+
+.mitt{
+  background-color: lightblue !important;
+}
+
+.Risp{
+  background-color: lightgrey;
+  height: 50px;
+  width: 600px;
+  right:  0;
+  bottom: 0;
+  position: absolute;
+}
+
+#input{
+  height: 44px;
+  width: 520px;
+}
+
+#invia{
+  height: 44px;
+  width: 70px;
 }

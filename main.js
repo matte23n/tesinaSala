@@ -10,6 +10,16 @@ $("#MyTeam").on("click", function(e){
   window.location.href = "paginaSquadra.html";
 });
 
+$("#MSG").on("click", function(e){
+  window.location.href = "messaggi.html";
+});
+
+$("#invia").on("click", function(e){
+  console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaas");
+  debugger;
+  inviaMessaggio($('#invia').data("trattativa"));
+})
+
 $( document ).ready(function() {
   checkLogIn();
   $('#Home').text('Home Page');
@@ -358,31 +368,35 @@ function getMessaggi(){
       success: function(data)
       {
         console.log(data);
-        $('#messaggi').text('Hai ricevuto ' + data.length + ' messaggi');
-        if (data.length>0) {
-          $('#messaggi').append(':<br>');
-          $('#messaggi').append('<table id="tableMessaggi">'
-          +'<tr>'
-            +'<td>Squadra Inviante</td>'
-            +'<td>Data</td>'
-            +'<td>Testo</td>'
-          +'</tr>'
-        +'</table>');
-        }
         for (var i = 0; i < data.length; i++) {
             var ID_Mittente = data[i].ID_Mittente
-            var dataInvio = data[i].Data
-            var testo = data[i].Testo
             var nomeSquadra = getNomeSquadra(ID_Mittente);
-            $('#tableMessaggi').append('<tr>'
-              +'<td>'+nomeSquadra[0].Denominazione+'</td>'
-              +'<td>'+dataInvio+'</td>'
-              +'<td>'+testo+'</td>'
-              +'<td><input type="submit" value="Rispondi" onclick="rispondi('+data[i].ID_Trattativa+')"></input></td>'
-            +'</tr>');
-            //$('#trattative').append(ID_Giocatore + ' ' + ID_Squadra_Offerente + ' ' + Tipologia_Trattativa + ' ' + note + '<br>');
+            var trattativa = data[i].ID_Trattativa
+            var letto = data[i].Letto
+            $('.listMessage').append("<div id="+ID_Mittente+" data-trattativa="+trattativa+">"+nomeSquadra[0].Denominazione+"</div>");
+            $('#'+ID_Mittente).on("click", function(e){
+              $('.Chat').text('');
+              $('#invia').data("trattativa", e.currentTarget.dataset.trattativa);
+              $.ajax({
+                type: "POST",
+                url: 'main.php',
+                data: {'dataString': 'setLetto', idTrattativa:e.currentTarget.dataset.trattativa},
+                dataType: 'json',
+                success: function(data)
+                {
+                  console.log(data);
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                  console.log(xhr.status);
+                  console.log(thrownError);
+                }
+              });
+              getMessaggeText(e.currentTarget.id);
+            })
+            if(letto == 0){
+              $('#'+ID_Mittente).addClass("nletto");
+            }
         }
-        //$('#trattative').append();
       },
       error: function (xhr, ajaxOptions, thrownError) {
         console.log(xhr.status);
@@ -390,6 +404,34 @@ function getMessaggi(){
       }
     });
   }
+}
+
+function getMessaggeText(idMittente){
+  $.ajax({
+    type: "POST",
+    url: 'main.php',
+    data: {'dataString': 'getMessageText', idSquadra:Cookies.get('utente'), idMittente:idMittente},
+    dataType: 'json',
+    success: function(data)
+    {
+      console.log(data);
+      for (var i = 0; i < data.length; i++) {
+          var ID_Mittente = data[i].ID_Mittente
+          var testo = data[i].Testo
+          $('.Chat').append('<div id=t'+ID_Mittente+'>'+testo+'</div>')
+          if(ID_Mittente == idMittente){
+            $('#t'+ID_Mittente).each(function() {
+              $( this ).addClass('mitt');
+            });
+          }
+      }
+      //$('#trattative').append();
+    },
+    error: function (xhr, ajaxOptions, thrownError) {
+      console.log(xhr.status);
+      console.log(thrownError);
+    }
+  });
 }
 
 function rispondi(idTrattativa){
@@ -404,8 +446,8 @@ function rispondi(idTrattativa){
 
 function inviaMessaggio(idTrattativa){
   var idSquadra = Cookies.get('utente');
-  var testo = $('#textMessaggio').val();
-  //Inserisce una richiesta di informazioni nel database
+  var testo = $('#input').val();
+  console.log(idTrattativa)
   $.ajax({
     type: "POST",
     url: 'main.php',
@@ -414,7 +456,6 @@ function inviaMessaggio(idTrattativa){
     success: function(data)
     {
       console.log(data);
-      $('#overlayC').css("display", "none");
     },
     error: function (e) {
       obj = JSON.parse(e.responseText);
@@ -454,6 +495,7 @@ function checkLogIn(){
       $('.login').text('LogOut');
       $('#LogIn').attr('id','LogOut');
       $('#MyTeam').text('La mia squadra');
+      $('#MSG').text('Messaggi');
       $('#LogOut').unbind('click').click(function(f){
         logOut();
       });
